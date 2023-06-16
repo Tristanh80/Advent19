@@ -3,6 +3,12 @@ package com.example.advent19.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -149,18 +155,37 @@ public class SolverInterfaceImpl implements SolverInterface {
         return max;
     }
 
+    private void writeInFile(String string) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("analysis.txt", true));
+            writer.write(string);
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Une erreur s'est produite lors de l'écriture du fichier : " + e);
+        }
+    }
+
     @Override
     public Integer solve(String string) {
         List<Blueprint> blueprints = blueprintParser.parseBlueprints(string);
         Integer totalQuality = 0;
+        Integer bestBlueprintId = 0;
         for (Blueprint blueprint : blueprints) {
             cache.clear();
             Integer max = solve(blueprint, 24);
-            System.out.println("ID: " + blueprint.getId() + " - Max quality: " + max);
+            String str = "Blueprint " + blueprint.getId() + ": " + (max * blueprint.getId()) + "\n";
+            System.out.println(str);
+            // Write string to file
+            writeInFile(str);
             totalQuality += (max * blueprint.getId());
-            System.out.println("Total quality: " + totalQuality);
+            if (max > bestBlueprintId) {
+                bestBlueprintId = blueprint.getId();
+            }
         }
-
+        String bestBlueprint = "Best Blueprint is the blueprint " + bestBlueprintId + ".\n";
+        System.out.println(bestBlueprint);
+        // Write string to file
+        writeInFile(bestBlueprint);
         return totalQuality;
     }
 }

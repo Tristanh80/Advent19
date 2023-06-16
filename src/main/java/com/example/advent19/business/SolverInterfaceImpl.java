@@ -85,15 +85,15 @@ public class SolverInterfaceImpl implements SolverInterface {
     }
 
     private Integer solve(Blueprint blueprint, Integer timeLimit) {
-        Integer oreRobotCost = blueprint.getCost(ResourceType.ORE).getCost(ResourceType.ORE);
-        Integer clayRobotCost = blueprint.getCost(ResourceType.CLAY).getCost(ResourceType.ORE);
-        Integer obsidianOreRobotCost = blueprint.getCost(ResourceType.OBSIDIAN).getCost(ResourceType.ORE);
-        Integer obsidianClayRobotCost = blueprint.getCost(ResourceType.OBSIDIAN).getCost(ResourceType.CLAY);
-        Integer geodeOreRobotCost = blueprint.getCost(ResourceType.GEODE).getCost(ResourceType.ORE);
-        Integer geodeObsidianRobotCost = blueprint.getCost(ResourceType.GEODE).getCost(ResourceType.OBSIDIAN);
-        Integer diamondGeodeRobotCost = blueprint.getCost(ResourceType.DIAMOND).getCost(ResourceType.GEODE);
-        Integer diamondClayRobotCost = blueprint.getCost(ResourceType.DIAMOND).getCost(ResourceType.CLAY);
-        Integer diamondObsidianRobotCost = blueprint.getCost(ResourceType.DIAMOND).getCost(ResourceType.OBSIDIAN);
+        Integer oreRobotCost = blueprint.getRobotCost(ResourceType.ORE).getRessourceCost(ResourceType.ORE);
+        Integer clayRobotCost = blueprint.getRobotCost(ResourceType.CLAY).getRessourceCost(ResourceType.ORE);
+        Integer obsidianOreRobotCost = blueprint.getRobotCost(ResourceType.OBSIDIAN).getRessourceCost(ResourceType.ORE);
+        Integer obsidianClayRobotCost = blueprint.getRobotCost(ResourceType.OBSIDIAN).getRessourceCost(ResourceType.CLAY);
+        Integer geodeOreRobotCost = blueprint.getRobotCost(ResourceType.GEODE).getRessourceCost(ResourceType.ORE);
+        Integer geodeObsidianRobotCost = blueprint.getRobotCost(ResourceType.GEODE).getRessourceCost(ResourceType.OBSIDIAN);
+        Integer diamondGeodeRobotCost = blueprint.getRobotCost(ResourceType.DIAMOND).getRessourceCost(ResourceType.GEODE);
+        Integer diamondClayRobotCost = blueprint.getRobotCost(ResourceType.DIAMOND).getRessourceCost(ResourceType.CLAY);
+        Integer diamondObsidianRobotCost = blueprint.getRobotCost(ResourceType.DIAMOND).getRessourceCost(ResourceType.OBSIDIAN);
 
         BuyCosts buyCosts = new BuyCosts(oreRobotCost, clayRobotCost, obsidianOreRobotCost, obsidianClayRobotCost,
                 geodeOreRobotCost, geodeObsidianRobotCost, diamondGeodeRobotCost, diamondClayRobotCost, diamondObsidianRobotCost);

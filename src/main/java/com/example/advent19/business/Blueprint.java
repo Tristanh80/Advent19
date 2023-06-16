@@ -19,7 +19,7 @@ public class Blueprint {
         this.costs.put(resourceType, cost);
     }
 
-    public Costs getCost(ResourceType resourceType) {
+    public Costs getRobotCost(ResourceType resourceType) {
         return this.costs.get(resourceType);
     }
 

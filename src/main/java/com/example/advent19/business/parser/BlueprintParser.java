@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface BlueprintParser {
 
-    public List<Blueprint> parseBlueprints(String input);
+    List<Blueprint> parseBlueprints(String input);
 }

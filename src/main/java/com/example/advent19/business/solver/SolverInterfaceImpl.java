@@ -104,7 +104,7 @@ public class SolverInterfaceImpl implements SolverInterface {
         return result;
     }
 
-    private Integer solve(Blueprint blueprint, Integer timeLimit) {
+    private Integer solve(Blueprint blueprint) {
         Integer oreRobotCost = blueprint.getRobotCost(ResourceType.ORE).getRessourceCost(ResourceType.ORE);
         Integer clayRobotCost = blueprint.getRobotCost(ResourceType.CLAY).getRessourceCost(ResourceType.ORE);
         Integer obsidianOreRobotCost = blueprint.getRobotCost(ResourceType.OBSIDIAN).getRessourceCost(ResourceType.ORE);
@@ -118,20 +118,18 @@ public class SolverInterfaceImpl implements SolverInterface {
         AllPrices allPrices = new AllPrices(oreRobotCost, clayRobotCost, obsidianOreRobotCost, obsidianClayRobotCost,
                 geodeOreRobotCost, geodeObsidianRobotCost, diamondGeodeRobotCost, diamondClayRobotCost, diamondObsidianRobotCost);
 
-        State firstState = new State(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, timeLimit);
+        State firstState = new State(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24);
         Integer maxOreRobot = clayRobotCost + obsidianOreRobotCost;
         maxOreRobot += geodeOreRobotCost;
         Integer maxClayRobot = obsidianClayRobotCost + diamondClayRobotCost;
         Integer maxObsidianRobot = geodeObsidianRobotCost + diamondObsidianRobotCost;
-        Integer maxGeodeRobot = diamondGeodeRobotCost;
 
-        MaxRobot maxRobot = new MaxRobot(maxOreRobot, maxClayRobot, maxObsidianRobot, maxGeodeRobot);
+        MaxRobot maxRobot = new MaxRobot(maxOreRobot, maxClayRobot, maxObsidianRobot, diamondGeodeRobotCost);
 
         dfs(firstState, allPrices, maxRobot);
 
         // return the max of cache
-        int max = this.dfsCache.values().stream().mapToInt(Integer::intValue).max().orElse(0);
-        return max;
+        return this.dfsCache.values().stream().mapToInt(Integer::intValue).max().orElse(0);
     }
 
     private void writeInFile(String string) {
@@ -147,24 +145,26 @@ public class SolverInterfaceImpl implements SolverInterface {
     @Override
     public Integer solve(String string) {
         List<Blueprint> blueprints = blueprintParser.parseBlueprints(string);
-        Integer totalQuality = 0;
-        Integer bestBlueprintId = 0;
+        int totalQuality = 0;
+        int bestBlueprintId = 0;
         for (Blueprint blueprint : blueprints) {
             dfsCache.clear();
-            Integer max = solve(blueprint, 24);
+
+            Integer max = solve(blueprint);
             String str = "Blueprint " + blueprint.getId() + ": " + (max * blueprint.getId()) + "\n";
             System.out.println(str);
-            // Write string to file
             writeInFile(str);
+
             totalQuality += (max * blueprint.getId());
             if (max > bestBlueprintId) {
                 bestBlueprintId = blueprint.getId();
             }
         }
+
         String bestBlueprint = "Best Blueprint is the blueprint " + bestBlueprintId + ".\n";
         System.out.println(bestBlueprint);
-        // Write string to file
         writeInFile(bestBlueprint);
+
         return totalQuality;
     }
 }

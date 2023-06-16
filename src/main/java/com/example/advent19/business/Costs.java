@@ -16,7 +16,7 @@ public class Costs {
         this.costs.put(resourceType, cost);
     }
 
-    public Integer getCost(ResourceType resourceType) {
+    public Integer getRessourceCost(ResourceType resourceType) {
         return this.costs.get(resourceType);
     }
 }

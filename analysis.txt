@@ -1,0 +1,15 @@
+Blueprint 1: 3
+Blueprint 2: 6
+Best Blueprint is the blueprint 2.
+Blueprint 1: 3
+Blueprint 2: 6
+Best Blueprint is the blueprint 2.
+Blueprint 1: 10
+Blueprint 2: 2
+Best Blueprint is the blueprint 1.
+Blueprint 1: 3
+Blueprint 2: 6
+Best Blueprint is the blueprint 2.
+Blueprint 1: 3
+Blueprint 2: 6
+Best Blueprint is the blueprint 2.

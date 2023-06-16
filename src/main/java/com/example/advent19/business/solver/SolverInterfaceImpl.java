@@ -1,14 +1,14 @@
-package com.example.advent19.business;
+package com.example.advent19.business.solver;
 
+import com.example.advent19.business.ResourceType;
+import com.example.advent19.business.parser.Blueprint;
+import com.example.advent19.business.parser.BlueprintParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,67 +19,68 @@ public class SolverInterfaceImpl implements SolverInterface {
 
     private final BlueprintParser blueprintParser;
 
-    HashMap<State, Integer> cache = new HashMap<>();
+    HashMap<State, Integer> dfsCache = new HashMap<>();
 
     @Autowired
     public SolverInterfaceImpl(BlueprintParser blueprintParser) {
         this.blueprintParser = blueprintParser;
     }
 
-    private Integer dfs(State state, BuyCosts buyCosts, MaxRobot maxRobot) {
+    private Integer dfs(State state, AllPrices allPrices, MaxRobot maxRobot) {
+
         if (state.getTimeLeft() == 0) {
             return state.getDiamondCount();
         }
 
         State key = state.duplicate();
-        if (cache.containsKey(key)) {
-            return cache.get(key);
+        if (dfsCache.containsKey(key)) {
+            return dfsCache.get(key);
         }
 
         ArrayList<Integer> bestOfTree = new ArrayList<>();
 
-        if (state.getGeodeCount() >= buyCosts.getDiamondGeodeRobotCost() && state.getClayCount() >= buyCosts.getDiamondClayRobotCost() && state.getObsidianCount() >= buyCosts.getDiamondObsidianRobotCost()) {
-            State diamondOre = state.simulateBuyingRobotAndIterate(ResourceType.DIAMOND, buyCosts);
-            Integer result = dfs(diamondOre, buyCosts, maxRobot);
+        if (state.getGeodeCount() >= allPrices.getDiamondGeodeRobotCost() && state.getClayCount() >= allPrices.getDiamondClayRobotCost() && state.getObsidianCount() >= allPrices.getDiamondObsidianRobotCost()) {
+            State diamondOre = state.simulateBuyingRobotAndIterate(ResourceType.DIAMOND, allPrices);
+            Integer result = dfs(diamondOre, allPrices, maxRobot);
             bestOfTree.add(result);
-            cache.put(key, result);
+            dfsCache.put(key, result);
             return result;
         }
 
-        if (state.getOreCount() >= buyCosts.getGeodeOreRobotCost() && state.getObsidianCount() >= buyCosts.getGeodeObsidianRobotCost() && state.getGeodeRobotCount() < maxRobot.getMaxGeodeRobot()) {
-            State buildGeode = state.simulateBuyingRobotAndIterate(ResourceType.GEODE, buyCosts);
-            Integer result = dfs(buildGeode, buyCosts, maxRobot);
+        if (state.getOreCount() >= allPrices.getGeodeOreRobotCost() && state.getObsidianCount() >= allPrices.getGeodeObsidianRobotCost() && state.getGeodeRobotCount() < maxRobot.getMaxGeodeRobot()) {
+            State buildGeode = state.simulateBuyingRobotAndIterate(ResourceType.GEODE, allPrices);
+            Integer result = dfs(buildGeode, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= buyCosts.getOreRobotCost() && state.getOreRobotCount() < maxRobot.getMaxOreRobot()) {
-            State buildOre = state.simulateBuyingRobotAndIterate(ResourceType.ORE, buyCosts);
-            Integer result = dfs(buildOre, buyCosts, maxRobot);
+        if (state.getOreCount() >= allPrices.getOreRobotCost() && state.getOreRobotCount() < maxRobot.getMaxOreRobot()) {
+            State buildOre = state.simulateBuyingRobotAndIterate(ResourceType.ORE, allPrices);
+            Integer result = dfs(buildOre, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= buyCosts.getClayRobotCost() && state.getClayCount() < maxRobot.getMaxClayRobot()) {
-            State buildClay = state.simulateBuyingRobotAndIterate(ResourceType.CLAY, buyCosts);
-            Integer result = dfs(buildClay, buyCosts, maxRobot);
+        if (state.getOreCount() >= allPrices.getClayRobotCost() && state.getClayCount() < maxRobot.getMaxClayRobot()) {
+            State buildClay = state.simulateBuyingRobotAndIterate(ResourceType.CLAY, allPrices);
+            Integer result = dfs(buildClay, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= buyCosts.getObsidianOreRobotCost() && state.getClayCount() >= buyCosts.getObsidianClayRobotCost() && state.getObsidianRobotCount() < maxRobot.getMaxObsidianRobot()) {
-            State buildObsidian = state.simulateBuyingRobotAndIterate(ResourceType.OBSIDIAN, buyCosts);
-            Integer result = dfs(buildObsidian, buyCosts, maxRobot);
+        if (state.getOreCount() >= allPrices.getObsidianOreRobotCost() && state.getClayCount() >= allPrices.getObsidianClayRobotCost() && state.getObsidianRobotCount() < maxRobot.getMaxObsidianRobot()) {
+            State buildObsidian = state.simulateBuyingRobotAndIterate(ResourceType.OBSIDIAN, allPrices);
+            Integer result = dfs(buildObsidian, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        State copy = state.simulateBuyingRobotAndIterate(null, buyCosts);
-        Integer result = dfs(copy, buyCosts, maxRobot);
+        State copy = state.simulateBuyingRobotAndIterate(null, allPrices);
+        Integer result = dfs(copy, allPrices, maxRobot);
 
         if (bestOfTree.isEmpty()) {
-            cache.put(key, result);
+            dfsCache.put(key, result);
         }
         else {
             Integer maxSolve = Collections.max(bestOfTree);
             Integer max = Math.max(maxSolve, result);
-            cache.put(key, max);
+            dfsCache.put(key, max);
         }
         return result;
     }
@@ -95,7 +96,7 @@ public class SolverInterfaceImpl implements SolverInterface {
         Integer diamondClayRobotCost = blueprint.getRobotCost(ResourceType.DIAMOND).getRessourceCost(ResourceType.CLAY);
         Integer diamondObsidianRobotCost = blueprint.getRobotCost(ResourceType.DIAMOND).getRessourceCost(ResourceType.OBSIDIAN);
 
-        BuyCosts buyCosts = new BuyCosts(oreRobotCost, clayRobotCost, obsidianOreRobotCost, obsidianClayRobotCost,
+        AllPrices allPrices = new AllPrices(oreRobotCost, clayRobotCost, obsidianOreRobotCost, obsidianClayRobotCost,
                 geodeOreRobotCost, geodeObsidianRobotCost, diamondGeodeRobotCost, diamondClayRobotCost, diamondObsidianRobotCost);
 
         State firstState = new State(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, timeLimit);
@@ -107,10 +108,10 @@ public class SolverInterfaceImpl implements SolverInterface {
 
         MaxRobot maxRobot = new MaxRobot(maxOreRobot, maxClayRobot, maxObsidianRobot, maxGeodeRobot);
 
-        dfs(firstState, buyCosts, maxRobot);
+        dfs(firstState, allPrices, maxRobot);
 
         // return the max of cache
-        int max = this.cache.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+        int max = this.dfsCache.values().stream().mapToInt(Integer::intValue).max().orElse(0);
         return max;
     }
 
@@ -130,7 +131,7 @@ public class SolverInterfaceImpl implements SolverInterface {
         Integer totalQuality = 0;
         Integer bestBlueprintId = 0;
         for (Blueprint blueprint : blueprints) {
-            cache.clear();
+            dfsCache.clear();
             Integer max = solve(blueprint, 24);
             String str = "Blueprint " + blueprint.getId() + ": " + (max * blueprint.getId()) + "\n";
             System.out.println(str);

@@ -1,4 +1,4 @@
-package com.example.advent19.business;
+package com.example.advent19.business.solver;
 
 public interface SolverInterface {
 

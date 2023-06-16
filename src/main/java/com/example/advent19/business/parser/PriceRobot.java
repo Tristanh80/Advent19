@@ -1,14 +1,15 @@
-package com.example.advent19.business;
+package com.example.advent19.business.parser;
 
+import com.example.advent19.business.ResourceType;
 import lombok.Data;
 
 import java.util.HashMap;
 
 @Data
-public class Costs {
+public class PriceRobot {
     private final HashMap<ResourceType, Integer> costs;
 
-    public Costs() {
+    public PriceRobot() {
         this.costs = new HashMap<>();
     }
 

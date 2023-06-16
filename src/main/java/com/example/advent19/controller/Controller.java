@@ -1,6 +1,6 @@
 package com.example.advent19.controller;
 
-import com.example.advent19.business.SolverInterface;
+import com.example.advent19.business.solver.SolverInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

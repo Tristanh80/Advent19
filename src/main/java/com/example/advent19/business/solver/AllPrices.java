@@ -1,12 +1,11 @@
-package com.example.advent19.business;
+package com.example.advent19.business.solver;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class BuyCosts {
-
+public class AllPrices {
     Integer oreRobotCost;
     Integer clayRobotCost;
     Integer obsidianOreRobotCost;

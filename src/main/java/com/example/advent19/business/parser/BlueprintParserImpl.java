@@ -1,5 +1,6 @@
-package com.example.advent19.business;
+package com.example.advent19.business.parser;
 
+import com.example.advent19.business.ResourceType;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,21 +32,21 @@ public class BlueprintParserImpl implements BlueprintParser{
 
         Blueprint blueprint = new Blueprint(numbersInt[0]);
 
-        Costs oreCost = new Costs();
+        PriceRobot oreCost = new PriceRobot();
         oreCost.addCost(ResourceType.ORE, numbersInt[1]);
 
-        Costs clayCost = new Costs();
+        PriceRobot clayCost = new PriceRobot();
         clayCost.addCost(ResourceType.ORE, numbersInt[2]);
 
-        Costs obsidianCost = new Costs();
+        PriceRobot obsidianCost = new PriceRobot();
         obsidianCost.addCost(ResourceType.ORE, numbersInt[3]);
         obsidianCost.addCost(ResourceType.CLAY, numbersInt[4]);
 
-        Costs geodeCost = new Costs();
+        PriceRobot geodeCost = new PriceRobot();
         geodeCost.addCost(ResourceType.ORE, numbersInt[5]);
         geodeCost.addCost(ResourceType.OBSIDIAN, numbersInt[6]);
 
-        Costs diamondCost = new Costs();
+        PriceRobot diamondCost = new PriceRobot();
         diamondCost.addCost(ResourceType.GEODE, numbersInt[7]);
         diamondCost.addCost(ResourceType.CLAY, numbersInt[8]);
         diamondCost.addCost(ResourceType.OBSIDIAN, numbersInt[9]);

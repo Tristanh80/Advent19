@@ -39,79 +39,38 @@ public class SolverInterfaceImpl implements SolverInterface {
         ArrayList<Integer> bestOfTree = new ArrayList<>();
 
         if (state.getGeodeCount() >= buyCosts.getDiamondGeodeRobotCost() && state.getClayCount() >= buyCosts.getDiamondClayRobotCost() && state.getObsidianCount() >= buyCosts.getDiamondObsidianRobotCost()) {
-            State newState = state.duplicate();
-            newState.setDiamondRobotCount(state.getDiamondRobotCount() + 1);
-            newState.setOreCount(state.getOreCount() + state.getOreRobotCount());
-            newState.setClayCount(state.getClayCount() - buyCosts.getDiamondClayRobotCost() + state.getClayRobotCount());
-            newState.setObsidianCount(state.getObsidianCount() - buyCosts.getDiamondObsidianRobotCost() + state.getObsidianRobotCount());
-            newState.setGeodeCount(state.getGeodeCount() - buyCosts.getDiamondGeodeRobotCost() + state.getGeodeRobotCount());
-            newState.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-            newState.setTimeLeft(state.getTimeLeft() - 1);
-            Integer result = dfs(newState, buyCosts, maxRobot);
+            State diamondOre = state.simulateBuyingRobotAndIterate(ResourceType.DIAMOND, buyCosts);
+            Integer result = dfs(diamondOre, buyCosts, maxRobot);
             bestOfTree.add(result);
             cache.put(key, result);
             return result;
         }
 
         if (state.getOreCount() >= buyCosts.getGeodeOreRobotCost() && state.getObsidianCount() >= buyCosts.getGeodeObsidianRobotCost() && state.getGeodeRobotCount() < maxRobot.getMaxGeodeRobot()) {
-            State buildGeode = state.duplicate();
-            buildGeode.setGeodeRobotCount(state.getGeodeRobotCount() + 1);
-            buildGeode.setOreCount(state.getOreCount() - buyCosts.getGeodeOreRobotCost() + state.getOreRobotCount());
-            buildGeode.setClayCount(state.getClayCount() + state.getClayRobotCount());
-            buildGeode.setObsidianCount(state.getObsidianCount() - buyCosts.getGeodeObsidianRobotCost() + state.getObsidianRobotCount());
-            buildGeode.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
-            buildGeode.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-            buildGeode.setTimeLeft(state.getTimeLeft() - 1);
+            State buildGeode = state.simulateBuyingRobotAndIterate(ResourceType.GEODE, buyCosts);
             Integer result = dfs(buildGeode, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
         if (state.getOreCount() >= buyCosts.getOreRobotCost() && state.getOreRobotCount() < maxRobot.getMaxOreRobot()) {
-            State buildOre = state.duplicate();
-            buildOre.setOreRobotCount(state.getOreRobotCount() + 1);
-            buildOre.setOreCount(state.getOreCount() - buyCosts.getOreRobotCost() + state.getOreRobotCount());
-            buildOre.setClayCount(state.getClayCount() + state.getClayRobotCount());
-            buildOre.setObsidianCount(state.getObsidianCount() + state.getObsidianRobotCount());
-            buildOre.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
-            buildOre.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-            buildOre.setTimeLeft(state.getTimeLeft() - 1);
+            State buildOre = state.simulateBuyingRobotAndIterate(ResourceType.ORE, buyCosts);
             Integer result = dfs(buildOre, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
         if (state.getOreCount() >= buyCosts.getClayRobotCost() && state.getClayCount() < maxRobot.getMaxClayRobot()) {
-            State buildClay = state.duplicate();
-            buildClay.setClayRobotCount(state.getClayRobotCount() + 1);
-            buildClay.setOreCount(state.getOreCount() - buyCosts.getClayRobotCost() + state.getOreRobotCount());
-            buildClay.setClayCount(state.getClayCount() + state.getClayRobotCount());
-            buildClay.setObsidianCount(state.getObsidianCount() + state.getObsidianRobotCount());
-            buildClay.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
-            buildClay.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-            buildClay.setTimeLeft(state.getTimeLeft() - 1);
+            State buildClay = state.simulateBuyingRobotAndIterate(ResourceType.CLAY, buyCosts);
             Integer result = dfs(buildClay, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
         if (state.getOreCount() >= buyCosts.getObsidianOreRobotCost() && state.getClayCount() >= buyCosts.getObsidianClayRobotCost() && state.getObsidianRobotCount() < maxRobot.getMaxObsidianRobot()) {
-            State buildObsidian = state.duplicate();
-            buildObsidian.setObsidianRobotCount(state.getObsidianRobotCount() + 1);
-            buildObsidian.setOreCount(state.getOreCount() - buyCosts.getObsidianOreRobotCost() + state.getOreRobotCount());
-            buildObsidian.setClayCount(state.getClayCount() - buyCosts.getObsidianClayRobotCost() + state.getClayRobotCount());
-            buildObsidian.setObsidianCount(state.getObsidianCount() + state.getObsidianRobotCount());
-            buildObsidian.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
-            buildObsidian.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-            buildObsidian.setTimeLeft(state.getTimeLeft() - 1);
+            State buildObsidian = state.simulateBuyingRobotAndIterate(ResourceType.OBSIDIAN, buyCosts);
             Integer result = dfs(buildObsidian, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
-        State copy = state.duplicate();
-        copy.setOreCount(state.getOreCount() + state.getOreRobotCount());
-        copy.setClayCount(state.getClayCount() + state.getClayRobotCount());
-        copy.setObsidianCount(state.getObsidianCount() + state.getObsidianRobotCount());
-        copy.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
-        copy.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-        copy.setTimeLeft(state.getTimeLeft() - 1);
+        State copy = state.simulateBuyingRobotAndIterate(null, buyCosts);
         Integer result = dfs(copy, buyCosts, maxRobot);
 
         if (bestOfTree.isEmpty()) {

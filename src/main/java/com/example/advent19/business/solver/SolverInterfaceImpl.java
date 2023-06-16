@@ -26,6 +26,7 @@ public class SolverInterfaceImpl implements SolverInterface {
         this.blueprintParser = blueprintParser;
     }
 
+
     private Integer dfs(State state, AllPrices allPrices, MaxRobot maxRobot) {
 
         if (state.getTimeLeft() == 0) {
@@ -39,7 +40,11 @@ public class SolverInterfaceImpl implements SolverInterface {
 
         ArrayList<Integer> bestOfTree = new ArrayList<>();
 
-        if (state.getGeodeCount() >= allPrices.getDiamondGeodeRobotCost() && state.getClayCount() >= allPrices.getDiamondClayRobotCost() && state.getObsidianCount() >= allPrices.getDiamondObsidianRobotCost()) {
+        if (
+                state.getGeodeCount() >= allPrices.getDiamondGeodeRobotCost() &&
+                state.getClayCount() >= allPrices.getDiamondClayRobotCost() &&
+                state.getObsidianCount() >= allPrices.getDiamondObsidianRobotCost()
+        ) {
             State diamondOre = state.simulateBuyingRobotAndIterate(ResourceType.DIAMOND, allPrices);
             Integer result = dfs(diamondOre, allPrices, maxRobot);
             bestOfTree.add(result);
@@ -47,25 +52,39 @@ public class SolverInterfaceImpl implements SolverInterface {
             return result;
         }
 
-        if (state.getOreCount() >= allPrices.getGeodeOreRobotCost() && state.getObsidianCount() >= allPrices.getGeodeObsidianRobotCost() && state.getGeodeRobotCount() < maxRobot.getMaxGeodeRobot()) {
+        if (
+                state.getOreCount() >= allPrices.getGeodeOreRobotCost() &&
+                state.getObsidianCount() >= allPrices.getGeodeObsidianRobotCost() &&
+                state.getGeodeRobotCount() < maxRobot.getMaxGeodeRobot()
+        ) {
             State buildGeode = state.simulateBuyingRobotAndIterate(ResourceType.GEODE, allPrices);
             Integer result = dfs(buildGeode, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= allPrices.getOreRobotCost() && state.getOreRobotCount() < maxRobot.getMaxOreRobot()) {
+        if (
+                state.getOreCount() >= allPrices.getOreRobotCost() &&
+                state.getOreRobotCount() < maxRobot.getMaxOreRobot()
+        ) {
             State buildOre = state.simulateBuyingRobotAndIterate(ResourceType.ORE, allPrices);
             Integer result = dfs(buildOre, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= allPrices.getClayRobotCost() && state.getClayCount() < maxRobot.getMaxClayRobot()) {
+        if (
+                state.getOreCount() >= allPrices.getClayRobotCost() &&
+                state.getClayCount() < maxRobot.getMaxClayRobot()
+        ) {
             State buildClay = state.simulateBuyingRobotAndIterate(ResourceType.CLAY, allPrices);
             Integer result = dfs(buildClay, allPrices, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= allPrices.getObsidianOreRobotCost() && state.getClayCount() >= allPrices.getObsidianClayRobotCost() && state.getObsidianRobotCount() < maxRobot.getMaxObsidianRobot()) {
+        if (
+                state.getOreCount() >= allPrices.getObsidianOreRobotCost() &&
+                state.getClayCount() >= allPrices.getObsidianClayRobotCost() &&
+                state.getObsidianRobotCount() < maxRobot.getMaxObsidianRobot()
+        ) {
             State buildObsidian = state.simulateBuyingRobotAndIterate(ResourceType.OBSIDIAN, allPrices);
             Integer result = dfs(buildObsidian, allPrices, maxRobot);
             bestOfTree.add(result);
@@ -100,10 +119,10 @@ public class SolverInterfaceImpl implements SolverInterface {
                 geodeOreRobotCost, geodeObsidianRobotCost, diamondGeodeRobotCost, diamondClayRobotCost, diamondObsidianRobotCost);
 
         State firstState = new State(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, timeLimit);
-        Integer maxOreRobot = Math.max(clayRobotCost, obsidianOreRobotCost);
-        maxOreRobot = Math.max(maxOreRobot, geodeOreRobotCost);
-        Integer maxClayRobot = Math.max(obsidianClayRobotCost, diamondClayRobotCost);
-        Integer maxObsidianRobot = Math.max(geodeObsidianRobotCost, diamondObsidianRobotCost);
+        Integer maxOreRobot = clayRobotCost + obsidianOreRobotCost;
+        maxOreRobot += geodeOreRobotCost;
+        Integer maxClayRobot = obsidianClayRobotCost + diamondClayRobotCost;
+        Integer maxObsidianRobot = geodeObsidianRobotCost + diamondObsidianRobotCost;
         Integer maxGeodeRobot = diamondGeodeRobotCost;
 
         MaxRobot maxRobot = new MaxRobot(maxOreRobot, maxClayRobot, maxObsidianRobot, maxGeodeRobot);

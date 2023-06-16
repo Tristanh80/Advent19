@@ -20,7 +20,7 @@ public class SolverInterfaceImpl implements SolverInterface {
         this.blueprintParser = blueprintParser;
     }
 
-    private Integer dfs(State state, BuyCosts buyCosts) {
+    private Integer dfs(State state, BuyCosts buyCosts, MaxRobot maxRobot) {
         if (state.getTimeLeft() == 0) {
             return state.getDiamondCount();
         }
@@ -41,26 +41,26 @@ public class SolverInterfaceImpl implements SolverInterface {
             newState.setGeodeCount(state.getGeodeCount() - buyCosts.getDiamondGeodeRobotCost() + state.getGeodeRobotCount());
             newState.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
             newState.setTimeLeft(state.getTimeLeft() - 1);
-            Integer result = dfs(newState, buyCosts);
+            Integer result = dfs(newState, buyCosts, maxRobot);
             bestOfTree.add(result);
             cache.put(key, result);
             return result;
         }
 
-        if (state.getOreCount() >= buyCosts.getGeodeOreRobotCost() && state.getObsidianCount() >= buyCosts.getGeodeObsidianRobotCost()) {
-            State newState = state.duplicate();
-            newState.setGeodeRobotCount(state.getGeodeRobotCount() + 1);
-            newState.setOreCount(state.getOreCount() - buyCosts.getGeodeOreRobotCost() + state.getOreRobotCount());
-            newState.setClayCount(state.getClayCount() + state.getClayRobotCount());
-            newState.setObsidianCount(state.getObsidianCount() - buyCosts.getGeodeObsidianRobotCost() + state.getObsidianRobotCount());
-            newState.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
-            newState.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
-            newState.setTimeLeft(state.getTimeLeft() - 1);
-            Integer result = dfs(newState, buyCosts);
+        if (state.getOreCount() >= buyCosts.getGeodeOreRobotCost() && state.getObsidianCount() >= buyCosts.getGeodeObsidianRobotCost() && state.getGeodeRobotCount() < maxRobot.getMaxGeodeRobot()) {
+            State buildGeode = state.duplicate();
+            buildGeode.setGeodeRobotCount(state.getGeodeRobotCount() + 1);
+            buildGeode.setOreCount(state.getOreCount() - buyCosts.getGeodeOreRobotCost() + state.getOreRobotCount());
+            buildGeode.setClayCount(state.getClayCount() + state.getClayRobotCount());
+            buildGeode.setObsidianCount(state.getObsidianCount() - buyCosts.getGeodeObsidianRobotCost() + state.getObsidianRobotCount());
+            buildGeode.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
+            buildGeode.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
+            buildGeode.setTimeLeft(state.getTimeLeft() - 1);
+            Integer result = dfs(buildGeode, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= buyCosts.getOreRobotCost()) {
+        if (state.getOreCount() >= buyCosts.getOreRobotCost() && state.getOreRobotCount() < maxRobot.getMaxOreRobot()) {
             State buildOre = state.duplicate();
             buildOre.setOreRobotCount(state.getOreRobotCount() + 1);
             buildOre.setOreCount(state.getOreCount() - buyCosts.getOreRobotCost() + state.getOreRobotCount());
@@ -69,11 +69,11 @@ public class SolverInterfaceImpl implements SolverInterface {
             buildOre.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
             buildOre.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
             buildOre.setTimeLeft(state.getTimeLeft() - 1);
-            Integer result = dfs(buildOre, buyCosts);
+            Integer result = dfs(buildOre, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= buyCosts.getClayRobotCost()) {
+        if (state.getOreCount() >= buyCosts.getClayRobotCost() && state.getClayCount() < maxRobot.getMaxClayRobot()) {
             State buildClay = state.duplicate();
             buildClay.setClayRobotCount(state.getClayRobotCount() + 1);
             buildClay.setOreCount(state.getOreCount() - buyCosts.getClayRobotCost() + state.getOreRobotCount());
@@ -82,11 +82,11 @@ public class SolverInterfaceImpl implements SolverInterface {
             buildClay.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
             buildClay.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
             buildClay.setTimeLeft(state.getTimeLeft() - 1);
-            Integer result = dfs(buildClay, buyCosts);
+            Integer result = dfs(buildClay, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
-        if (state.getOreCount() >= buyCosts.getObsidianOreRobotCost() && state.getClayCount() >= buyCosts.getObsidianClayRobotCost()) {
+        if (state.getOreCount() >= buyCosts.getObsidianOreRobotCost() && state.getClayCount() >= buyCosts.getObsidianClayRobotCost() && state.getObsidianRobotCount() < maxRobot.getMaxObsidianRobot()) {
             State buildObsidian = state.duplicate();
             buildObsidian.setObsidianRobotCount(state.getObsidianRobotCount() + 1);
             buildObsidian.setOreCount(state.getOreCount() - buyCosts.getObsidianOreRobotCost() + state.getOreRobotCount());
@@ -95,7 +95,7 @@ public class SolverInterfaceImpl implements SolverInterface {
             buildObsidian.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
             buildObsidian.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
             buildObsidian.setTimeLeft(state.getTimeLeft() - 1);
-            Integer result = dfs(buildObsidian, buyCosts);
+            Integer result = dfs(buildObsidian, buyCosts, maxRobot);
             bestOfTree.add(result);
         }
 
@@ -106,7 +106,7 @@ public class SolverInterfaceImpl implements SolverInterface {
         copy.setGeodeCount(state.getGeodeCount() + state.getGeodeRobotCount());
         copy.setDiamondCount(state.getDiamondCount() + state.getDiamondRobotCount());
         copy.setTimeLeft(state.getTimeLeft() - 1);
-        Integer result = dfs(copy, buyCosts);
+        Integer result = dfs(copy, buyCosts, maxRobot);
 
         if (bestOfTree.isEmpty()) {
             cache.put(key, result);
@@ -134,7 +134,15 @@ public class SolverInterfaceImpl implements SolverInterface {
                 geodeOreRobotCost, geodeObsidianRobotCost, diamondGeodeRobotCost, diamondClayRobotCost, diamondObsidianRobotCost);
 
         State firstState = new State(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, timeLimit);
-        dfs(firstState, buyCosts);
+        Integer maxOreRobot = Math.max(clayRobotCost, obsidianOreRobotCost);
+        maxOreRobot = Math.max(maxOreRobot, geodeOreRobotCost);
+        Integer maxClayRobot = Math.max(obsidianClayRobotCost, diamondClayRobotCost);
+        Integer maxObsidianRobot = Math.max(geodeObsidianRobotCost, diamondObsidianRobotCost);
+        Integer maxGeodeRobot = diamondGeodeRobotCost;
+
+        MaxRobot maxRobot = new MaxRobot(maxOreRobot, maxClayRobot, maxObsidianRobot, maxGeodeRobot);
+
+        dfs(firstState, buyCosts, maxRobot);
 
         // return the max of cache
         int max = this.cache.values().stream().mapToInt(Integer::intValue).max().orElse(0);
